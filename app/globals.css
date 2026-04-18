@@ -168,9 +168,9 @@ body {
 }
 
 /* Mobile/tablet: shift left to show the bottle which is left-of-center in a5.png */
-@media (max-width: 900px) {
+@media (max-width: 800px) {
   .section-bg-integration {
-    background-position: -18% center;
+    background-position: left center;
   }
 }
 
