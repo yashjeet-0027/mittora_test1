@@ -1,0 +1,401 @@
+@import "tailwindcss";
+
+/* ── Reset & Base ──────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  background: #000;
+  color: #f3f4f6;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Fullpage container (clips the strip) ──────────────────── */
+.fullpage-wrapper {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* ── Strip: vertical flex column — this is what we translate ─ */
+.section-strip {
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+}
+
+/* ── Each section is 100vh in the strip ───────────────────── */
+.section-panel {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* ── Background image div ──────────────────────────────────── */
+.section-bg {
+  position: absolute;
+  /* Extra bleed on all sides for zoom/parallax headroom */
+  top: -8%;
+  left: -8%;
+  width: 116%;
+  height: 116%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  will-change: transform;
+  transform-origin: center center;
+}
+
+/* Subtle dark vignette on all sections */
+.section-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 35%, rgba(0, 0, 0, 0.5) 100%);
+  pointer-events: none;
+}
+
+/* ── Content layer ─────────────────────────────────────────── */
+.section-content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  padding: clamp(2rem, 5vw, 6rem);
+  display: flex;
+  pointer-events: none;
+}
+
+/* Hide all text children by default — GSAP animates them in.
+   This prevents the SSR-visible → JS-snap-invisible → fade-in flash. */
+.section-content>* {
+  opacity: 0;
+}
+
+/* ── Section 1: Origin ─────────────────────────────────────── */
+.section-origin .section-content {
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding-top: clamp(5rem, 14vh, 12rem);
+}
+
+.origin-heading {
+  font-family: 'Playfair Display', serif;
+  font-weight: 800;
+  font-size: clamp(3.5rem, 9vw, 10rem);
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: #fff;
+  text-shadow: 0 4px 60px rgba(0, 0, 0, 0.5);
+}
+
+.origin-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 400;
+  font-size: clamp(0.65rem, 1.1vw, 0.85rem);
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.38);
+  margin-top: clamp(1.5rem, 4vh, 3rem);
+}
+
+/* ── Section 2: Craft ──────────────────────────────────────── */
+.section-craft .section-content {
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding-bottom: clamp(5rem, 12vh, 10rem);
+}
+
+.craft-text {
+  font-family: 'Playfair Display', serif;
+  font-weight: 500;
+  font-style: italic;
+  font-size: clamp(1.4rem, 3vw, 3rem);
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: right;
+  max-width: 520px;
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.7);
+}
+
+/* ── Section 3: Catalyst ───────────────────────────────────── */
+.section-catalyst .section-content {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 10vh;
+}
+
+.catalyst-text {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: clamp(1rem, 1.8vw, 1.5rem);
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.75);
+  text-align: center;
+  max-width: 480px;
+  letter-spacing: 0.025em;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.8);
+}
+
+/* ── Section 4: Integration ────────────────────────────────── */
+.section-integration .section-content {
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding-bottom: clamp(5rem, 10vh, 9rem);
+  padding-left: clamp(3rem, 6vw, 7rem);
+  pointer-events: auto;
+}
+
+/* Desktop: default center position */
+.section-bg-integration {
+  background-position: center center;
+}
+
+/* Mobile/tablet: shift left to show the bottle which is left-of-center in a5.png */
+@media (max-width: 900px) {
+  .section-bg-integration {
+    background-position: -18% center;
+  }
+}
+
+.integration-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 400;
+  font-size: clamp(0.55rem, 0.75vw, 0.68rem);
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.32);
+  margin-bottom: 1rem;
+}
+
+.integration-title {
+  font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+  font-weight: 300;
+  font-size: clamp(2.6rem, 5.2vw, 5.2rem);
+  color: #fff;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  text-shadow: 0 4px 40px rgba(0, 0, 0, 0.4);
+}
+
+.integration-spec {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 300;
+  font-size: clamp(0.6rem, 0.85vw, 0.78rem);
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+  margin-top: 0.85rem;
+}
+
+.btn-explore {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: clamp(2rem, 4vh, 3rem);
+  padding: 0.95rem 2.4rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: clamp(0.6rem, 0.78vw, 0.72rem);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #fff;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.6s cubic-bezier(0.16, 1, 0.3, 1), letter-spacing 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.btn-explore::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.05);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-explore:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.32em;
+}
+
+.btn-explore:hover::before {
+  transform: scaleX(1);
+}
+
+.btn-explore .btn-arrow {
+  display: inline-block;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-explore:hover .btn-arrow {
+  transform: translateX(5px);
+}
+
+/* ── Crossfade overlay (Section 4) ────────────────────────── */
+.crossfade-overlay {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  z-index: 8;
+  /* above bg (default 0) but below section-content (z-index 10) */
+  pointer-events: none;
+}
+
+/* ── Nav Bar ───────────────────────────────────────────────── */
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 1.5rem clamp(2rem, 5vw, 6rem);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  mix-blend-mode: difference;
+  pointer-events: none;
+}
+
+.nav-bar * {
+  pointer-events: auto;
+}
+
+.nav-logo {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  font-size: clamp(0.7rem, 1vw, 0.85rem);
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.nav-links {
+  display: flex;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: clamp(0.6rem, 0.8vw, 0.75rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  transition: color 0.4s ease;
+  cursor: pointer;
+}
+
+.nav-links a:hover {
+  color: #fff;
+}
+
+/* ── Scroll dots ───────────────────────────────────────────── */
+.scroll-indicator {
+  position: fixed;
+  right: clamp(1.5rem, 2.5vw, 2.5rem);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  align-items: center;
+  mix-blend-mode: difference;
+}
+
+.scroll-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  cursor: pointer;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-dot.active {
+  background: #fff;
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.35);
+  transform: scale(1.8);
+}
+
+/* ── Scroll hint ───────────────────────────────────────────── */
+.scroll-hint {
+  position: fixed;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  mix-blend-mode: difference;
+  pointer-events: none;
+  transition: opacity 0.9s ease;
+}
+
+.scroll-hint-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.scroll-hint-line {
+  width: 1px;
+  height: 28px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scaleY(0.6);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+/* ── Kiln progress bar (optional subtle feedback) ──────────── */
+.kiln-progress {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: rgba(255, 120, 40, 0.6);
+  z-index: 200;
+  transition: width 0.05s linear;
+  pointer-events: none;
+}
